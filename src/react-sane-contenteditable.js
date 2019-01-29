@@ -50,7 +50,7 @@ class ContentEditable extends Component {
     super();
 
     this.state = {
-      value: this.sanitiseValue(props.content),
+      value: this.sanitiseValue(props.content, props),
     };
   }
 
@@ -59,23 +59,15 @@ class ContentEditable extends Component {
     this.setCaret();
   }
 
-  // shouldComponentUpdate(nextProps) {
-  //   const propKeys = Object.keys(nextProps);
-  //   return !isEqual(pick(nextProps, propKeys), pick(this.props, propKeys));
-  // }
-
-  componentDidUpdate() {
-    this.setValue();
-    this.setFocus();
-    this.setCaret();
-  }
-
-  setValue() {
+  componentDidUpdate(prevProps) {
     const { content } = this.props;
 
-    if (content !== this.sanitiseValue(this.state.value)) {
+    if (prevProps.content !== content) {
       this.setState({ value: content });
     }
+
+    this.setFocus();
+    this.setCaret();
   }
 
   setFocus() {
@@ -100,8 +92,8 @@ class ContentEditable extends Component {
     }
   };
 
-  sanitiseValue(value) {
-    const { maxLength, multiLine, sanitise } = this.props;
+  sanitiseValue(value, props = this.props) {
+    const { maxLength, multiLine, sanitise } = props;
 
     if (!sanitise) {
       return value;
@@ -125,8 +117,7 @@ class ContentEditable extends Component {
 
     if (this.state.value !== value) {
       this.setState({ value }, () => {
-        this.props.onChange(ev, this.state.value);
-        console.log('_onChange', this.state.value, value);
+        this.props.onChange(ev, value);
       });
     }
   };
@@ -142,10 +133,10 @@ class ContentEditable extends Component {
   };
 
   _onBlur = ev => {
-    this.setState({
-      value: this.sanitiseValue(ev.target.innerText),
-    }, () => {
-      this.props.onChange(ev, this.state.value);
+    const value = this.sanitiseValue(ev.target.innerText);
+
+    this.setState({ value }, () => {
+      this.props.onChange(ev, value);
       this.props.onBlur(ev);
     });
   };

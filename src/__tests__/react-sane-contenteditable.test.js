@@ -46,7 +46,7 @@ describe('Default behaviour', () => {
     expect(wrapper.prop('style')).toHaveProperty('whiteSpace', 'pre-wrap');
   });
 
-  fit('onInput sets state.value', () => {
+  it('onInput sets state.value', () => {
     const mockHandler = jest.fn();
     const wrapper = shallow(<ContentEditable content="foo" onChange={mockHandler} />);
     const nextInput = 'foo bar';
@@ -54,8 +54,6 @@ describe('Default behaviour', () => {
     wrapper.find('div').simulate('input', { target: { innerText: nextInput } });
 
     wrapper.instance().forceUpdate();
-
-    console.log('State->value', wrapper.state());
 
     expect(mockHandler).toHaveBeenCalledWith(expect.any(Object), nextInput);
     // expect(wrapper.update().state('value')).toEqual(nextInput);
@@ -181,8 +179,13 @@ describe('Sanitisation', () => {
     const mockHandler = jest.fn();
     const wrapper = mount(<ContentEditable content="foo" onChange={mockHandler} />);
 
-    wrapper.instance()._element.innerText = 'foo&nbsp;bar';
-    focusThenBlur(wrapper);
+    wrapper
+      .find('div')
+      .simulate('focus')
+      .simulate('blur', { target: { innerText: 'foo&nbsp;bar' } });
+
+    wrapper.instance().forceUpdate();
+
     expect(wrapper.state('value')).toEqual('foo bar');
   });
 
