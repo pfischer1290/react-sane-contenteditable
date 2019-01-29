@@ -6,11 +6,6 @@ const reduceTargetKeys = (target, keys, predicate) => Object.keys(target).reduce
 const omit = (target = {}, keys = []) =>
   reduceTargetKeys(target, keys, (acc, key) => keys.some(omitKey => omitKey === key) ? acc : { ...acc, [key]: target[key] });
 
-const pick = (target = {}, keys = []) =>
-  reduceTargetKeys(target, keys, (acc, key) => keys.some(pickKey => pickKey === key) ? { ...acc, [key]: target[key] } : acc);
-
-const isEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
-
 const propTypes = {
   content: PropTypes.string,
   editable: PropTypes.bool,
@@ -74,7 +69,7 @@ class ContentEditable extends Component {
     if (this.props.focus && this._element) {
       this._element.focus();
     }
-  };
+  }
 
   setCaret() {
     const { caretPosition } = this.props;
@@ -90,7 +85,7 @@ class ContentEditable extends Component {
       selection.removeAllRanges();
       selection.addRange(range);
     }
-  };
+  }
 
   sanitiseValue(value, props = this.props) {
     const { maxLength, multiLine, sanitise } = props;

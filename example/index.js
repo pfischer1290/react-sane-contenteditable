@@ -12,22 +12,22 @@ class App extends Component {
   };
 
   handleKeyDown = (ev, value) => {
-    // this.setState({ title: value });
+    this.setState({ title: value });
   };
 
   render() {
     return (
       <div className="App">
         <ContentEditable
-          focus
           tagName="h1"
           className="my-class"
           content={this.state.title}
-          editable={true}
+          editable
+          focus
           maxLength={140}
-          multiLine={true}
+          multiLine
           onChange={this.handleChange}
-          onKeyDown={this.handleKeyDown}
+          // onKeyDown={this.handleKeyDown}
           caretPosition="end"
         />
 
